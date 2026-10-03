@@ -1,8 +1,173 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld" : {
+
+    },
+    "5:28 /km" : {
+
+    },
+    "5.24" : {
+
+    },
+    "28:41" : {
+
+    },
+    "Allow Location" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izinkan Lokasi"
+          }
+        }
+      }
+    },
+    "Choose “While Using the App” in the next dialog." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pilih “Saat App Dipakai” di dialog berikutnya."
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lanjut"
+          }
+        }
+      }
+    },
+    "Distance" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jarak"
+          }
+        }
+      }
+    },
+    "Every Step, Recorded" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setiap Langkah Tercatat"
+          }
+        }
+      }
+    },
     "Increment" : {
 
+    },
+    "Jejak has no server. Every session lives on your device." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jejak tidak punya server. Semua sesi tersimpan di perangkatmu."
+          }
+        }
+      }
+    },
+    "km" : {
+
+    },
+    "Location is used to draw your route and measure distance. It never leaves your iPhone." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lokasi dipakai untuk menggambar rute dan menghitung jarak. Lokasi tidak pernah keluar dari iPhone-mu."
+          }
+        }
+      }
+    },
+    "No account, no sign-up" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tanpa akun, tanpa daftar"
+          }
+        }
+      }
+    },
+    "Not Now" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nanti Saja"
+          }
+        }
+      }
+    },
+    "Page %lld of %lld" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halaman %1$lld dari %2$lld"
+          }
+        }
+      }
+    },
+    "Record your runs and walks — distance, time and pace, right on your iPhone." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rekam lari dan jalan kakimu — jarak, durasi, dan pace langsung di iPhone."
+          }
+        }
+      }
+    },
+    "Skip" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lewati"
+          }
+        }
+      }
+    },
+    "Stored only on this iPhone" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tersimpan di iPhone ini saja"
+          }
+        }
+      }
+    },
+    "Works fully offline" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jalan tanpa internet"
+          }
+        }
+      }
+    },
+    "Your Data Stays Here" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datamu Tetap di Sini"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
