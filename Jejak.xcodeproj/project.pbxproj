@@ -202,14 +202,15 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				id,
 				Base,
 			);
 			mainGroup = 28AA1A3B30713DB60055CD8C;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			packageReferences = (
 				28AA1A6F30713DB70055CD8C /* XCRemoteSwiftPackageReference "Swinject" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 28AA1A4530713DB60055CD8C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -397,6 +398,7 @@
 				DEVELOPMENT_TEAM = 68R77L7WB2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Jejak memakai lokasimu untuk merekam rute, jarak, dan pace saat kamu lari atau jalan.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -433,6 +435,7 @@
 				DEVELOPMENT_TEAM = 68R77L7WB2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Jejak memakai lokasimu untuk merekam rute, jarak, dan pace saat kamu lari atau jalan.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
