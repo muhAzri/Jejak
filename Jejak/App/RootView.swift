@@ -1,8 +1,14 @@
 import SwiftUI
 
 struct RootView: View {
+    @State private var isOnboardingCompleted = DIContainer.shared.resolve(GetOnboardingStatus.self)()
+
     var body: some View {
-        CounterScreen()
+        if isOnboardingCompleted {
+            CounterScreen()
+        } else {
+            OnboardingScreen { isOnboardingCompleted = true }
+        }
     }
 }
 

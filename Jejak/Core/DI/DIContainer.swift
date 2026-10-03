@@ -11,6 +11,7 @@ final class DIContainer {
         container = Container()
         assembler = Assembler(
             [
+                OnboardingAssembly(),
                 CounterAssembly(),
                 // add one Assembly per feature
             ],
