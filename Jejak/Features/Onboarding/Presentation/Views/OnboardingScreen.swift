@@ -41,7 +41,7 @@ private struct IntroPage: View {
 }
 
 private struct SampleSessionCard: View {
-    let layout: OnboardingLayout
+    let layout: ScreenLayout
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -119,7 +119,7 @@ private struct PrivacyPage: View {
 private struct PrivacyRow: View {
     let icon: HeroIcon
     let text: LocalizedStringKey
-    let layout: OnboardingLayout
+    let layout: ScreenLayout
 
     var body: some View {
         HStack(spacing: 12) {
@@ -195,7 +195,7 @@ private struct LocationPage: View {
         }
     }
 
-    private func pinSize(_ layout: OnboardingLayout) -> CGFloat {
+    private func pinSize(_ layout: ScreenLayout) -> CGFloat {
         switch layout {
         case .regular: 120
         case .compact: 80
@@ -204,7 +204,7 @@ private struct LocationPage: View {
     }
 }
 
-private extension OnboardingLayout {
+private extension ScreenLayout {
     /// Gap above the card that follows the heading.
     var detailSpacing: CGFloat {
         switch self {

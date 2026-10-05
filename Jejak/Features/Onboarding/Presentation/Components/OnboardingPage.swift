@@ -1,24 +1,6 @@
 import SwiftUI
 
-/// Onboarding layout per screen shape, from the iPhone Duo design.
-enum OnboardingLayout {
-    /// Standard iPhone: single column.
-    case regular
-    /// Duo closed (outer screen, ~566pt tall): single column with tighter sizing.
-    case compact
-    /// Duo open (inner screen): visual in the left panel, text and actions in the right panel.
-    case split
-
-    init(horizontalSizeClass: UserInterfaceSizeClass?, size: CGSize) {
-        if horizontalSizeClass == .regular && size.width > size.height {
-            self = .split
-        } else if size.height < 600 {
-            self = .compact
-        } else {
-            self = .regular
-        }
-    }
-
+extension ScreenLayout {
     var titleSize: CGFloat { self == .compact ? 24 : 32 }
 }
 
@@ -27,8 +9,8 @@ enum OnboardingLayout {
 struct OnboardingPage<Visual: View, Content: View, Actions: View>: View {
     let step: OnboardingStep
     var skipAction: (() -> Void)?
-    @ViewBuilder var visual: (OnboardingLayout) -> Visual
-    @ViewBuilder var content: (OnboardingLayout) -> Content
+    @ViewBuilder var visual: (ScreenLayout) -> Visual
+    @ViewBuilder var content: (ScreenLayout) -> Content
     @ViewBuilder var actions: Actions
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -36,7 +18,7 @@ struct OnboardingPage<Visual: View, Content: View, Actions: View>: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let layout = OnboardingLayout(horizontalSizeClass: horizontalSizeClass, size: proxy.size)
+            let layout = ScreenLayout(horizontalSizeClass: horizontalSizeClass, size: proxy.size)
             Group {
                 if layout == .split {
                     split(panelWidth: proxy.size.width / 2)
@@ -44,12 +26,11 @@ struct OnboardingPage<Visual: View, Content: View, Actions: View>: View {
                     stacked(layout)
                 }
             }
-            .animation(reduceMotion ? .easeInOut(duration: 0.2) : .timingCurve(0.2, 0, 0, 1, duration: 0.5),
-                       value: layout)
+            .animation(ScreenLayout.transition(reduceMotion: reduceMotion), value: layout)
         }
     }
 
-    private func stacked(_ layout: OnboardingLayout) -> some View {
+    private func stacked(_ layout: ScreenLayout) -> some View {
         VStack(spacing: 0) {
             topBar
                 .padding(.horizontal, 16)
@@ -113,7 +94,7 @@ struct OnboardingPage<Visual: View, Content: View, Actions: View>: View {
 struct OnboardingHeading: View {
     let title: LocalizedStringKey
     let message: LocalizedStringKey
-    let layout: OnboardingLayout
+    let layout: ScreenLayout
 
     var body: some View {
         Text(title)
