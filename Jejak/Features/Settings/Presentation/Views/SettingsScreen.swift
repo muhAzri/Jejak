@@ -16,8 +16,8 @@ struct SettingsScreen: View {
     }
 
     var body: some View {
-        // Measured edge to edge so the open Duo's columns split on the hinge; the horizontal and top
-        // safe area are padded explicitly.
+        // Measured edge to edge horizontally so the open Duo's columns split on the hinge; the horizontal
+        // safe area is padded explicitly. The top safe area is kept so the header clears the status bar.
         GeometryReader { proxy in
             let layout = ScreenLayout(horizontalSizeClass: horizontalSizeClass, size: proxy.size)
             let insets = proxy.safeAreaInsets
@@ -70,7 +70,7 @@ struct SettingsScreen: View {
             }
             .animation(ScreenLayout.transition(reduceMotion: reduceMotion), value: layout)
         }
-        .ignoresSafeArea(.container, edges: [.horizontal, .top])
+        .ignoresSafeArea(.container, edges: .horizontal)
         .background(JejakColor.surface.ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)
         .task { await viewModel.observePermission() }

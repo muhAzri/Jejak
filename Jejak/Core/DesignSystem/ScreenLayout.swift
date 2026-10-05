@@ -21,10 +21,11 @@ enum ScreenLayout {
         }
     }
 
-    /// Space above the first line of content. The Duo screens can report little or no top safe area
-    /// (status bar hidden), so they keep a floor that clears the rounded corners.
+    /// Extra space between the top safe area (status bar) and the first line of content. Screens keep the
+    /// top safe area, so iPhone needs none; the Duo screens can report little or no top safe area
+    /// (status bar hidden), so they keep content at least 32pt from the edge to clear the rounded corners.
     func topMargin(safeAreaTop: CGFloat) -> CGFloat {
-        self == .regular ? safeAreaTop : max(safeAreaTop + 8, 32)
+        self == .regular ? 0 : max(8, 32 - safeAreaTop)
     }
 
     /// Outer edge margin of the open Duo's panels (the fold side keeps 24pt).

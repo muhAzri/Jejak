@@ -20,8 +20,8 @@ struct HomeScreen: View {
 
     var body: some View {
         NavigationStack {
-            // Measured edge to edge so the open Duo's panels split on the hinge; each layout pads
-            // the horizontal and top safe area itself.
+            // Measured edge to edge horizontally so the open Duo's panels split on the hinge; each layout
+            // pads the horizontal safe area itself. The top safe area is kept so content clears the status bar.
             GeometryReader { proxy in
                 let layout = ScreenLayout(horizontalSizeClass: horizontalSizeClass, size: proxy.size)
                 let insets = proxy.safeAreaInsets
@@ -36,7 +36,7 @@ struct HomeScreen: View {
                 .animation(ScreenLayout.transition(reduceMotion: reduceMotion), value: layout)
                 .animation(.easeInOut(duration: 0.2), value: viewModel.notice)
             }
-            .ignoresSafeArea(.container, edges: [.horizontal, .top])
+            .ignoresSafeArea(.container, edges: .horizontal)
             .background(JejakColor.surface.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(isPresented: $isShowingSettings) {
