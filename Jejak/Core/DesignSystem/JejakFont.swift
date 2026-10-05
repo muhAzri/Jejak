@@ -9,6 +9,8 @@ enum JejakFont {
 
     /// h1 · page title (display face).
     static let h1 = display(18, relativeTo: .title3)
+    /// h2 · sheet and modal titles (display face).
+    static let h2Display = display(16, relativeTo: .headline)
     static let h2 = body("Bold", 16, .headline)
     static let p1 = body("Regular", 14, .body)
     static let p1Semibold = body("SemiBold", 14, .body)
