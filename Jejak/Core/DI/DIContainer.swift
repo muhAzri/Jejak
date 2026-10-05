@@ -13,6 +13,7 @@ final class DIContainer {
             [
                 OnboardingAssembly(),
                 SettingsAssembly(),
+                HomeAssembly(),
                 CounterAssembly(),
                 // add one Assembly per feature
             ],
