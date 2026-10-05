@@ -250,6 +250,7 @@ struct HomeScreen: View {
 private struct PreviewSessions: SessionRepository {
     let session: SessionSummary?
     func latest() -> SessionSummary? { session }
+    func save(_ session: SessionSummary) {}
 }
 
 private struct PreviewSettings: SettingsRepository {
