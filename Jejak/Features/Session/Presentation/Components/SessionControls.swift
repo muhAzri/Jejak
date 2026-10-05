@@ -97,7 +97,7 @@ private struct HoldToFinishButton: View {
             ZStack {
                 if highlighted {
                     Circle()
-                        .stroke(Color.white.opacity(0.12), lineWidth: 4)
+                        .stroke(JejakColor.textPrimary.opacity(0.12), lineWidth: 4)
                     Circle()
                         .trim(from: 0, to: progress)
                         .stroke(JejakColor.accent, style: StrokeStyle(lineWidth: 4, lineCap: .round))

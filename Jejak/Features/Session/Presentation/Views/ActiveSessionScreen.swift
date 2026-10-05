@@ -1,11 +1,9 @@
 import SwiftUI
 
-/// Full-screen recording view, always dark. Folding or unfolding the Duo only changes the layout;
+/// Full-screen recording view; follows the app's light or dark appearance. Folding or unfolding the Duo only changes the layout;
 /// recording, pause and lock state live in the view model and carry over.
 struct ActiveSessionScreen: View {
     @State private var viewModel: ActiveSessionViewModel
-    /// The app's own appearance, for the summary sheet (this screen forces dark).
-    let summaryColorScheme: ColorScheme
     /// Ends the session flow (cancel, save or discard).
     let onClose: () -> Void
 
@@ -17,11 +15,9 @@ struct ActiveSessionScreen: View {
     @MainActor
     init(activity: ActivityType,
          viewModel: ActiveSessionViewModel? = nil,
-         summaryColorScheme: ColorScheme,
          onClose: @escaping () -> Void) {
         _viewModel = State(initialValue: viewModel
             ?? DIContainer.shared.resolve(ActiveSessionViewModel.self, argument: activity))
-        self.summaryColorScheme = summaryColorScheme
         self.onClose = onClose
     }
 
@@ -44,7 +40,6 @@ struct ActiveSessionScreen: View {
         .animation(.easeInOut(duration: 0.2), value: viewModel.phase)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isLocked)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isShowingTooShort)
-        .preferredColorScheme(.dark)
         // As on Home: the closed Duo's status bar would cover the map chips.
         .statusBarHidden(screenLayout == .compact)
         .task { await viewModel.track() }
@@ -60,7 +55,6 @@ struct ActiveSessionScreen: View {
         .sheet(isPresented: .constant(viewModel.phase == .finished)) {
             SessionSummaryScreen(viewModel: viewModel, layout: screenLayout, onClose: onClose)
                 .statusBarHidden(screenLayout == .compact)
-                .preferredColorScheme(summaryColorScheme)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.hidden)
                 .interactiveDismissDisabled()
@@ -138,7 +132,7 @@ struct ActiveSessionScreen: View {
                 .background(JejakColor.fillInput)
 
             if viewModel.phase == .searching {
-                Color.black.opacity(0.45).allowsHitTesting(false)
+                JejakColor.canvas.opacity(0.5).allowsHitTesting(false)
             }
             if fadesIntoCanvas {
                 LinearGradient(colors: [JejakColor.canvas.opacity(0), JejakColor.canvas], startPoint: .top, endPoint: .bottom)
@@ -283,20 +277,20 @@ private func previewModel(recording: Bool = true) -> ActiveSessionViewModel {
 }
 
 #Preview("Recording") {
-    ActiveSessionScreen(activity: .run, viewModel: previewModel(), summaryColorScheme: .light, onClose: {})
+    ActiveSessionScreen(activity: .run, viewModel: previewModel(), onClose: {})
 }
 
 #Preview("Searching") {
-    ActiveSessionScreen(activity: .walk, viewModel: previewModel(recording: false), summaryColorScheme: .light, onClose: {})
+    ActiveSessionScreen(activity: .walk, viewModel: previewModel(recording: false), onClose: {})
 }
 
 #Preview("iPhone Duo · closed", traits: .fixedLayout(width: 400, height: 566)) {
-    ActiveSessionScreen(activity: .run, viewModel: previewModel(), summaryColorScheme: .light, onClose: {})
+    ActiveSessionScreen(activity: .run, viewModel: previewModel(), onClose: {})
         .environment(\.horizontalSizeClass, .compact)
 }
 
 #Preview("iPhone Duo · open", traits: .fixedLayout(width: 800, height: 566)) {
-    ActiveSessionScreen(activity: .run, viewModel: previewModel(), summaryColorScheme: .light, onClose: {})
+    ActiveSessionScreen(activity: .run, viewModel: previewModel(), onClose: {})
         .environment(\.horizontalSizeClass, .regular)
 }
 #endif

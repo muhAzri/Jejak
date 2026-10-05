@@ -22,7 +22,7 @@ private extension UIColor {
 
 enum JejakColor {
     static let surface = Color(light: 0xFFFFFF, dark: 0x161616)
-    /// Page background behind surfaces; the (always dark) session screen uses it edge to edge.
+    /// Page background behind surfaces; the session screen uses it edge to edge.
     static let canvas = Color(light: 0xEFEFEF, dark: 0x0B0B0B)
     static let textPrimary = Color(light: 0x262626, dark: 0xF2F2F2)
     static let textSecondary = Color(light: 0x838383, dark: 0x9A9A9A)

@@ -10,7 +10,6 @@ struct HomeScreen: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.colorScheme) private var colorScheme
 
     @MainActor
     init(viewModel: HomeViewModel? = nil) {
@@ -46,7 +45,7 @@ struct HomeScreen: View {
             }
         }
         .fullScreenCover(item: $activeSession, onDismiss: viewModel.refresh) { activity in
-            ActiveSessionScreen(activity: activity, summaryColorScheme: colorScheme) { activeSession = nil }
+            ActiveSessionScreen(activity: activity) { activeSession = nil }
         }
         .onAppear(perform: viewModel.refresh)
         .task { await viewModel.observePermission() }
