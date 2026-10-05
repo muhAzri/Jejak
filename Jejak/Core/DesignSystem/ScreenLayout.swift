@@ -4,7 +4,7 @@ import SwiftUI
 enum ScreenLayout {
     /// Standard iPhone: single column.
     case regular
-    /// Duo closed (outer screen, ~566pt tall): single column with tighter sizing.
+    /// Duo closed (outer screen, ~466×678pt): single column with tighter sizing.
     case compact
     /// Duo open (inner screen): context in the left panel, content and decisions in the right panel.
     case split
@@ -12,7 +12,9 @@ enum ScreenLayout {
     init(horizontalSizeClass: UserInterfaceSizeClass?, size: CGSize) {
         if horizontalSizeClass == .regular && size.width > size.height {
             self = .split
-        } else if size.height < 600 {
+        } else if size.height < 600 || size.width / size.height > 0.62 {
+            // The closed Duo is much squarer than any iPhone (~0.69 vs 0.46–0.58 width/height),
+            // whether measured edge to edge or inside the safe area.
             self = .compact
         } else {
             self = .regular
