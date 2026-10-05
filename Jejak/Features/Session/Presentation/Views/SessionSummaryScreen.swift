@@ -100,45 +100,18 @@ struct SessionSummaryScreen: View {
     // MARK: Pieces
 
     private func header(titleSize: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ActivityChip(activity: viewModel.activity, background: viewModel.activity.tint.opacity(0.12))
-            Text(viewModel.activity.completedTitle)
-                .font(JejakFont.display(titleSize, relativeTo: .largeTitle))
-                .foregroundStyle(JejakColor.textPrimary)
-                .accessibilityAddTraits(.isHeader)
-            if let start = viewModel.startDate, let end = viewModel.endDate {
-                Text(verbatim: "\(start.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())) · \(start.formatted(.dateTime.hour().minute()))–\(end.formatted(.dateTime.hour().minute()))")
-                    .font(JejakFont.p2)
-                    .foregroundStyle(JejakColor.textSecondary)
-            }
-        }
+        SessionHeading(activity: viewModel.activity, startDate: viewModel.startDate, endDate: viewModel.endDate,
+                       titleSize: titleSize)
     }
 
     private var map: some View {
-        let extremes = RoutePace.extremes(viewModel.route)
-        return StaticRouteMap(route: viewModel.route,
-                              coloring: extremes == nil ? .solid(viewModel.activity.tint) : .pace)
-            .background(JejakColor.fillInput)
-            .overlay(alignment: .bottomLeading) {
-                if let extremes {
-                    PaceLegend(slowest: extremes.slowest, fastest: extremes.fastest, unit: viewModel.unit)
-                        .padding(8)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+        SessionRouteMap(route: viewModel.route, activity: viewModel.activity, unit: viewModel.unit)
     }
 
     private func metrics(distanceSize: CGFloat, valueSize: CGFloat, spacing: CGFloat) -> some View {
-        let unit = viewModel.unit
-        return VStack(alignment: .leading, spacing: spacing) {
-            DistanceMetric(meters: viewModel.distanceMeters, unit: unit, size: distanceSize)
-            HStack(alignment: .top, spacing: 12) {
-                MetricTile(title: "Time", value: SessionFormat.duration(viewModel.duration), size: valueSize)
-                MetricTile(title: "Avg Pace", value: SessionFormat.pace(viewModel.averagePace, unit: unit), size: valueSize)
-                MetricTile(title: "Best Pace", value: SessionFormat.pace(RoutePace.extremes(viewModel.route)?.fastest, unit: unit),
-                           size: valueSize)
-            }
-        }
+        SessionMetrics(distanceMeters: viewModel.distanceMeters, duration: viewModel.duration,
+                       averagePace: viewModel.averagePace, route: viewModel.route, unit: viewModel.unit,
+                       distanceSize: distanceSize, valueSize: valueSize, spacing: spacing)
     }
 
     private var saveButton: some View {
@@ -177,15 +150,6 @@ struct SessionSummaryScreen: View {
                 }
             }
             .transition(.opacity)
-        }
-    }
-}
-
-extension ActivityType {
-    var completedTitle: LocalizedStringKey {
-        switch self {
-        case .run: "Run Complete"
-        case .walk: "Walk Complete"
         }
     }
 }
