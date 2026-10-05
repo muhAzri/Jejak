@@ -257,6 +257,8 @@ private struct PreviewSettings: SettingsRepository {
 private struct PreviewSessions: SessionRepository {
     func latest() -> SessionSummary? { nil }
     func save(_ session: SessionSummary) {}
+    func saveRawTrack(_ track: [RecordedFix], id: UUID) {}
+    func rawTrack(id: UUID) -> [RecordedFix] { [] }
     func delete(id: UUID) {}
 }
 
