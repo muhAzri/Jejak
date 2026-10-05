@@ -19,17 +19,20 @@ final class HomeViewModel {
     private var isOnceNoticeDismissed = false
 
     private let getLastSession: GetLastSession
+    private let deleteSession: DeleteSession
     private let getDistanceUnit: GetDistanceUnit
     private let getLocationPermission: GetLocationPermission
     private let observeLocationPermission: ObserveLocationPermission
     private let requestLocationPermission: RequestLocationPermission
 
     init(getLastSession: GetLastSession,
+         deleteSession: DeleteSession,
          getDistanceUnit: GetDistanceUnit,
          getLocationPermission: GetLocationPermission,
          observeLocationPermission: ObserveLocationPermission,
          requestLocationPermission: RequestLocationPermission) {
         self.getLastSession = getLastSession
+        self.deleteSession = deleteSession
         self.getDistanceUnit = getDistanceUnit
         self.getLocationPermission = getLocationPermission
         self.observeLocationPermission = observeLocationPermission
@@ -56,6 +59,12 @@ final class HomeViewModel {
         permission = getLocationPermission()
         lastSession = getLastSession()
         unit = getDistanceUnit()
+    }
+
+    /// Removes a saved session for good; the one before it, if any, becomes the last session.
+    func delete(_ session: SessionSummary) {
+        deleteSession(id: session.id)
+        lastSession = getLastSession()
     }
 
     /// Follows permission changes for as long as the calling task runs.

@@ -257,6 +257,7 @@ private struct PreviewSettings: SettingsRepository {
 private struct PreviewSessions: SessionRepository {
     func latest() -> SessionSummary? { nil }
     func save(_ session: SessionSummary) {}
+    func delete(id: UUID) {}
 }
 
 /// A model that has recorded a few minutes along a straight line.

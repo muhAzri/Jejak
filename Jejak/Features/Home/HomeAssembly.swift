@@ -12,11 +12,16 @@ final class HomeAssembly: Assembly {
             GetLastSession(r.resolve(SessionRepository.self)!)
         }.inObjectScope(.container)
 
+        container.register(DeleteSession.self) { r in
+            DeleteSession(r.resolve(SessionRepository.self)!)
+        }.inObjectScope(.container)
+
         // ViewModel: new instance per resolve
         container.register(HomeViewModel.self) { r in
             MainActor.assumeIsolated {
                 HomeViewModel(
                     getLastSession: r.resolve(GetLastSession.self)!,
+                    deleteSession: r.resolve(DeleteSession.self)!,
                     getDistanceUnit: r.resolve(GetDistanceUnit.self)!,
                     getLocationPermission: r.resolve(GetLocationPermission.self)!,
                     observeLocationPermission: r.resolve(ObserveLocationPermission.self)!,

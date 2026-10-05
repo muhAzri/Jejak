@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// A saved session, opened from Home's "Last Session": the summary's route and metrics, read-only.
+/// A saved session, opened from Home's "Last Session": the summary's route and metrics, and a way to delete it.
 struct SessionDetailScreen: View {
     let session: SessionSummary
     let unit: DistanceUnit
+    let onDelete: () -> Void
 
+    @State private var isConfirmingDelete = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -23,7 +25,9 @@ struct SessionDetailScreen: View {
                 }
             }
             .padding(.top, layout.topMargin(safeAreaTop: insets.top))
+            .overlay { deleteSheet(layout, proxy) }
             .animation(ScreenLayout.transition(reduceMotion: reduceMotion), value: layout)
+            .animation(.easeInOut(duration: 0.2), value: isConfirmingDelete)
         }
         .ignoresSafeArea(.container, edges: .horizontal)
         .background(JejakColor.surface.ignoresSafeArea())
@@ -33,22 +37,27 @@ struct SessionDetailScreen: View {
     // MARK: Layouts
 
     private var regular: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                backButton(size: 44)
-                    .padding(.top, 6)
-                SessionHeading(activity: session.activity, startDate: session.startDate, endDate: session.endDate,
-                               titleSize: 32)
-                    .padding(.top, 16)
-                    .padding(.bottom, 12)
-                map.frame(height: 220)
-                metrics(distanceSize: 64, valueSize: 24, spacing: 12)
-                    .padding(.top, 16)
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    backButton(size: 44)
+                        .padding(.top, 6)
+                    SessionHeading(activity: session.activity, startDate: session.startDate, endDate: session.endDate,
+                                   titleSize: 32)
+                        .padding(.top, 16)
+                        .padding(.bottom, 12)
+                    map.frame(height: 220)
+                    metrics(distanceSize: 64, valueSize: 24, spacing: 12)
+                        .padding(.top, 16)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
+            .scrollBounceBehavior(.basedOnSize)
+            deleteButton
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
         }
-        .scrollBounceBehavior(.basedOnSize)
     }
 
     private var compact: some View {
@@ -62,9 +71,11 @@ struct SessionDetailScreen: View {
             map.frame(minHeight: 110, maxHeight: .infinity)
             metrics(distanceSize: 48, valueSize: 20, spacing: 8)
                 .padding(.top, 12)
+            deleteButton
+                .padding(.top, 12)
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .padding(.bottom, 4)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
@@ -84,6 +95,7 @@ struct SessionDetailScreen: View {
                                titleSize: 32)
                 metrics(distanceSize: 64, valueSize: 22, spacing: 16)
                 Spacer(minLength: 0)
+                deleteButton
             }
             .padding(.top, 16)
             .padding(.leading, 24)
@@ -110,6 +122,37 @@ struct SessionDetailScreen: View {
         .accessibilityLabel(Text("Back"))
     }
 
+    private var deleteButton: some View {
+        Button("Delete Session") { isConfirmingDelete = true }
+            .buttonStyle(.destructive)
+    }
+
+    @ViewBuilder
+    private func deleteSheet(_ layout: ScreenLayout, _ proxy: GeometryProxy) -> some View {
+        if isConfirmingDelete {
+            let sheet = ConfirmSheet(title: "Delete This Session?",
+                                     message: "The route and all metrics will be permanently deleted.",
+                                     cancelTitle: "Cancel",
+                                     confirmTitle: "Delete",
+                                     onCancel: { isConfirmingDelete = false },
+                                     onConfirm: {
+                                         onDelete()
+                                         dismiss()
+                                     })
+            Group {
+                if layout == .split {
+                    HStack(spacing: 0) {
+                        JejakColor.scrim.ignoresSafeArea()
+                        sheet.padding(.trailing, proxy.safeAreaInsets.trailing)
+                    }
+                } else {
+                    sheet
+                }
+            }
+            .transition(.opacity)
+        }
+    }
+
     private var map: some View {
         SessionRouteMap(route: session.route, activity: session.activity, unit: unit)
     }
@@ -127,7 +170,8 @@ struct SessionDetailScreen: View {
         SessionDetailScreen(
             session: SessionSummary(activity: .run, startDate: .now.addingTimeInterval(-3_600),
                                     distanceMeters: 5_240, duration: 28 * 60 + 41),
-            unit: .kilometers
+            unit: .kilometers,
+            onDelete: {}
         )
     }
 }

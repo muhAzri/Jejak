@@ -42,7 +42,7 @@ struct HomeScreen: View {
                 SettingsScreen()
             }
             .navigationDestination(for: SessionSummary.self) { session in
-                SessionDetailScreen(session: session, unit: viewModel.unit)
+                SessionDetailScreen(session: session, unit: viewModel.unit) { viewModel.delete(session) }
             }
         }
         .fullScreenCover(item: $activeSession, onDismiss: viewModel.refresh) { activity in
@@ -264,6 +264,7 @@ private struct PreviewSessions: SessionRepository {
     let session: SessionSummary?
     func latest() -> SessionSummary? { session }
     func save(_ session: SessionSummary) {}
+    func delete(id: UUID) {}
 }
 
 private struct PreviewSettings: SettingsRepository {
@@ -290,6 +291,7 @@ private func previewModel(_ permission: LocationPermission = .whenInUse, hasSess
     let service = PreviewPermission(permission: permission)
     return HomeViewModel(
         getLastSession: GetLastSession(PreviewSessions(session: hasSession ? session : nil)),
+        deleteSession: DeleteSession(PreviewSessions(session: nil)),
         getDistanceUnit: GetDistanceUnit(PreviewSettings()),
         getLocationPermission: GetLocationPermission(service),
         observeLocationPermission: ObserveLocationPermission(service),

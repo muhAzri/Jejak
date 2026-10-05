@@ -105,6 +105,7 @@ struct ActiveSessionViewModelTests {
         var saved: [SessionSummary] = []
         func latest() -> SessionSummary? { saved.last }
         func save(_ session: SessionSummary) { saved.append(session) }
+        func delete(id: UUID) { saved.removeAll { $0.id == id } }
     }
 
     private let clock = Clock()

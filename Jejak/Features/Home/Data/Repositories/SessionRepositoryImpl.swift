@@ -18,13 +18,21 @@ final class SessionRepositoryImpl: SessionRepository {
     func save(_ session: SessionSummary) {
         var sessions = all().filter { $0.id != session.id }
         sessions.append(session)
+        write(sessions)
+    }
+
+    func delete(id: UUID) {
+        write(all().filter { $0.id != id })
+    }
+
+    private func write(_ sessions: [SessionSummary]) {
         do {
             try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(),
                                                     withIntermediateDirectories: true)
             try JSONEncoder().encode(sessions).write(to: fileURL, options: [.atomic, .completeFileProtection])
             cache = sessions
         } catch {
-            logger.error("Saving session failed: \(error.localizedDescription)")
+            logger.error("Writing sessions failed: \(error.localizedDescription)")
         }
     }
 
