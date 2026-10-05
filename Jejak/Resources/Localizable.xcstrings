@@ -13,12 +13,62 @@
     "28:41" : {
 
     },
+    "About" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentang"
+          }
+        }
+      }
+    },
+    "All data is stored on this iPhone. Deleting the app deletes every session." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semua data tersimpan di iPhone ini. Menghapus app akan menghapus semua sesi."
+          }
+        }
+      }
+    },
     "Allow Location" : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Izinkan Lokasi"
+          }
+        }
+      }
+    },
+    "Always" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selalu"
+          }
+        }
+      }
+    },
+    "Back" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kembali"
+          }
+        }
+      }
+    },
+    "Change in Settings" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ubah di Pengaturan"
           }
         }
       }
@@ -43,6 +93,16 @@
         }
       }
     },
+    "Dismiss" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutup"
+          }
+        }
+      }
+    },
     "Distance" : {
       "localizations" : {
         "id" : {
@@ -53,12 +113,32 @@
         }
       }
     },
+    "Distance Units" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satuan Jarak"
+          }
+        }
+      }
+    },
     "Every Step, Recorded" : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Setiap Langkah Tercatat"
+          }
+        }
+      }
+    },
+    "General" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umum"
           }
         }
       }
@@ -76,8 +156,78 @@
         }
       }
     },
+    "Jejak needs location to draw your route and measure distance." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jejak butuh lokasi untuk menggambar rute dan menghitung jarak."
+          }
+        }
+      }
+    },
+    "Kilometers (km)" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilometer (km)"
+          }
+        }
+      }
+    },
     "km" : {
 
+    },
+    "Language" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bahasa"
+          }
+        }
+      }
+    },
+    "Last Session" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesi Terakhir"
+          }
+        }
+      }
+    },
+    "Location Access" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Izin Lokasi"
+          }
+        }
+      }
+    },
+    "Location Access Off" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akses Lokasi Mati"
+          }
+        }
+      }
+    },
+    "Location Allowed Once" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lokasi Diizinkan Sekali"
+          }
+        }
+      }
     },
     "Location is used to draw your route and measure distance. It never leaves your iPhone." : {
       "localizations" : {
@@ -85,6 +235,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lokasi dipakai untuk menggambar rute dan menghitung jarak. Lokasi tidak pernah keluar dari iPhone-mu."
+          }
+        }
+      }
+    },
+    "Location Not Allowed Yet" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lokasi Belum Diizinkan"
+          }
+        }
+      }
+    },
+    "Miles (mi)" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mil (mi)"
           }
         }
       }
@@ -99,12 +269,62 @@
         }
       }
     },
+    "No Sessions Yet" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belum Ada Sesi Nih"
+          }
+        }
+      }
+    },
     "Not Now" : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nanti Saja"
+          }
+        }
+      }
+    },
+    "Not Set" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belum Diatur"
+          }
+        }
+      }
+    },
+    "Off" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mati"
+          }
+        }
+      }
+    },
+    "Once" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sekali"
+          }
+        }
+      }
+    },
+    "Open Settings" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buka Pengaturan"
           }
         }
       }
@@ -129,12 +349,52 @@
         }
       }
     },
+    "Run" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lari"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pengaturan"
+          }
+        }
+      }
+    },
     "Skip" : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lewati"
+          }
+        }
+      }
+    },
+    "Start Run" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mulai Lari"
+          }
+        }
+      }
+    },
+    "Start Walk" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mulai Jalan"
           }
         }
       }
@@ -149,6 +409,56 @@
         }
       }
     },
+    "Today · %@" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hari ini · %@"
+          }
+        }
+      }
+    },
+    "Version" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versi"
+          }
+        }
+      }
+    },
+    "Walk" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jalan"
+          }
+        }
+      }
+    },
+    "While Using" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saat Dipakai"
+          }
+        }
+      }
+    },
+    "Without location, Jejak can't record your route or distance. Turn it on in iOS Settings." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tanpa lokasi, Jejak tidak bisa merekam rute dan jarak. Nyalakan di Pengaturan iOS."
+          }
+        }
+      }
+    },
     "Works fully offline" : {
       "localizations" : {
         "id" : {
@@ -159,12 +469,42 @@
         }
       }
     },
+    "Yesterday · %@" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kemarin · %@"
+          }
+        }
+      }
+    },
+    "You'll be asked again every session. Choose “While Using the App” to skip this." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamu akan ditanya lagi setiap mulai sesi. Pilih “Saat App Dipakai” biar lancar."
+          }
+        }
+      }
+    },
     "Your Data Stays Here" : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Datamu Tetap di Sini"
+          }
+        }
+      }
+    },
+    "Your first session will show up here once saved." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesi pertamamu akan muncul di sini setelah disimpan."
           }
         }
       }
