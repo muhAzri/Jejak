@@ -47,7 +47,9 @@ struct ActiveSessionScreen: View {
         .sensoryFeedback(trigger: viewModel.phase) { old, new in
             switch new {
             case .finished: .success
-            case .paused, .recording where old != .searching: .impact(weight: .medium)
+            case .paused: .impact(weight: .medium)
+            // Resuming, not the first good fix.
+            case .recording where old != .searching: .impact(weight: .medium)
             default: nil
             }
         }
