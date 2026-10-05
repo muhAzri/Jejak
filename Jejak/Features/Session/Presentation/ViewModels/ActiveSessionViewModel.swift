@@ -184,7 +184,8 @@ final class ActiveSessionViewModel {
                                    endDate: endDate,
                                    distanceMeters: distanceMeters,
                                    duration: duration,
-                                   route: route))
+                                   route: route),
+                    rawTrack: recorder.rawTrack)
     }
 
     /// Cancel, discard, or leaving while searching: nothing is stored.
