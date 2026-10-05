@@ -42,6 +42,7 @@
 				Features/Counter/Data/Models/.gitkeep,
 				Features/Counter/Data/Services/.gitkeep,
 				Features/Counter/Presentation/Components/.gitkeep,
+				Info.plist,
 			);
 			target = 28AA1A4330713DB60055CD8C /* Jejak */;
 		};
@@ -398,6 +399,7 @@
 				DEVELOPMENT_TEAM = 68R77L7WB2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Jejak/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Jejak memakai lokasimu untuk merekam rute, jarak, dan pace saat kamu lari atau jalan.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -435,6 +437,7 @@
 				DEVELOPMENT_TEAM = 68R77L7WB2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Jejak/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Jejak memakai lokasimu untuk merekam rute, jarak, dan pace saat kamu lari atau jalan.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
