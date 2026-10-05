@@ -202,4 +202,21 @@ struct SessionRepositoryTests {
 
         #expect(SessionRepositoryImpl(fileURL: url).latest() == newer)
     }
+
+    @Test func deletingTheLatestSessionFallsBackToTheOneBefore() throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: "sessions-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let older = SessionSummary(activity: .walk, startDate: Date(timeIntervalSince1970: 100), distanceMeters: 800, duration: 600)
+        let newer = SessionSummary(activity: .run, startDate: Date(timeIntervalSince1970: 5_000), distanceMeters: 5_240, duration: 1_721)
+        let repository = SessionRepositoryImpl(fileURL: url)
+        repository.save(older)
+        repository.save(newer)
+
+        repository.delete(id: newer.id)
+        #expect(SessionRepositoryImpl(fileURL: url).latest() == older)
+
+        repository.delete(id: older.id)
+        #expect(SessionRepositoryImpl(fileURL: url).latest() == nil)
+    }
 }
