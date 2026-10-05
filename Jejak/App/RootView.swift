@@ -8,8 +8,7 @@ struct RootView: View {
     var body: some View {
         Group {
             if isOnboardingCompleted {
-                // TODO: open Active Session. Until it exists, Start only runs the location check.
-                HomeScreen(onStartSession: { _ in })
+                HomeScreen()
             } else {
                 OnboardingScreen { isOnboardingCompleted = true }
             }

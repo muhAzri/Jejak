@@ -4,18 +4,17 @@ import UIKit
 struct HomeScreen: View {
     @State private var viewModel: HomeViewModel
     @State private var isShowingSettings = false
-    let onStartSession: (ActivityType) -> Void
+    @State private var activeSession: ActivityType?
 
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
 
     @MainActor
-    init(viewModel: HomeViewModel? = nil,
-         onStartSession: @escaping (ActivityType) -> Void) {
+    init(viewModel: HomeViewModel? = nil) {
         _viewModel = State(initialValue: viewModel ?? DIContainer.shared.resolve(HomeViewModel.self))
-        self.onStartSession = onStartSession
     }
 
     var body: some View {
@@ -42,6 +41,9 @@ struct HomeScreen: View {
             .navigationDestination(isPresented: $isShowingSettings) {
                 SettingsScreen()
             }
+        }
+        .fullScreenCover(item: $activeSession, onDismiss: viewModel.refresh) { activity in
+            ActiveSessionScreen(activity: activity, summaryColorScheme: colorScheme) { activeSession = nil }
         }
         .onAppear(perform: viewModel.refresh)
         .task { await viewModel.observePermission() }
@@ -207,7 +209,7 @@ struct HomeScreen: View {
     private func startCard(_ activity: ActivityType, layout: ScreenLayout) -> some View {
         StartActivityCard(activity: activity, layout: layout, isLocked: !viewModel.canStart) {
             Task {
-                if await viewModel.prepareToStart() { onStartSession(activity) }
+                if await viewModel.prepareToStart() { activeSession = activity }
             }
         }
         .disabled(viewModel.isRequestingPermission)
@@ -225,7 +227,7 @@ struct HomeScreen: View {
     private func lastSession(_ layout: ScreenLayout, fillsHeight: Bool = true) -> some View {
         if let session = viewModel.lastSession {
             if layout == .split {
-                RoutePreview()
+                RoutePreview(session: session, cornerRadius: 12)
                     .frame(minHeight: 160, maxHeight: fillsHeight ? .infinity : 160)
             }
             LastSessionRow(session: session, unit: viewModel.unit, layout: layout)
@@ -285,38 +287,38 @@ private func previewModel(_ permission: LocationPermission = .whenInUse, hasSess
 }
 
 #Preview("Empty") {
-    HomeScreen(viewModel: previewModel(), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel())
 }
 
 #Preview("Last session") {
-    HomeScreen(viewModel: previewModel(hasSession: true), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel(hasSession: true))
 }
 
 #Preview("Location not requested") {
-    HomeScreen(viewModel: previewModel(.notDetermined), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel(.notDetermined))
 }
 
 #Preview("Location denied") {
-    HomeScreen(viewModel: previewModel(.denied), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel(.denied))
 }
 
 #Preview("Allowed once · dark") {
-    HomeScreen(viewModel: previewModel(.allowedOnce, hasSession: true), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel(.allowedOnce, hasSession: true))
         .preferredColorScheme(.dark)
 }
 
 #Preview("iPhone Duo · closed", traits: .fixedLayout(width: 400, height: 566)) {
-    HomeScreen(viewModel: previewModel(hasSession: true), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel(hasSession: true))
         .environment(\.horizontalSizeClass, .compact)
 }
 
 #Preview("iPhone Duo · open", traits: .fixedLayout(width: 800, height: 566)) {
-    HomeScreen(viewModel: previewModel(.allowedOnce, hasSession: true), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel(.allowedOnce, hasSession: true))
         .environment(\.horizontalSizeClass, .regular)
 }
 
 #Preview("iPhone Duo · open · denied", traits: .fixedLayout(width: 800, height: 566)) {
-    HomeScreen(viewModel: previewModel(.denied), onStartSession: { _ in })
+    HomeScreen(viewModel: previewModel(.denied))
         .environment(\.horizontalSizeClass, .regular)
 }
 #endif

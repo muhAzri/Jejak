@@ -43,7 +43,7 @@ struct LastSessionRow: View {
         HStack(spacing: 12) {
             // The open Duo shows the route large above the row instead of a thumbnail.
             if layout != .split {
-                RoutePreview()
+                RoutePreview(session: session)
                     .frame(width: layout == .regular ? 72 : 64, height: layout == .regular ? 72 : 64)
             }
 
@@ -113,11 +113,22 @@ private struct SessionDateText: View {
     }
 }
 
-/// Route map placeholder. Sessions don't store routes yet; this becomes a MapKit snapshot when they do.
+/// The session's route on a small, static map; a plain tile when it has no route.
 struct RoutePreview: View {
+    let session: SessionSummary
+    var cornerRadius: CGFloat = 8
+
     var body: some View {
-        RoundedRectangle(cornerRadius: 8)
-            .fill(JejakColor.fillInput)
-            .accessibilityHidden(true)
+        ZStack {
+            JejakColor.fillInput
+            if session.route.count > 1 {
+                StaticRouteMap(route: session.route,
+                               coloring: .solid(session.activity.tint),
+                               showsMarkers: false,
+                               lineWidth: 3)
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+        .accessibilityHidden(true)
     }
 }
