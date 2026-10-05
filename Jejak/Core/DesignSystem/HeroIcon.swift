@@ -15,11 +15,15 @@ enum HeroIcon: String {
     case xMark = "x-mark"
     case chevronLeft = "chevron-left"
     case language
+    case pause
+    case play
+    case stop
     // 20px
     case arrowRight = "arrow-right"
     case bolt
     case chevronRight = "chevron-right"
     case globeAsiaAustralia = "globe-asia-australia"
+    case signal
 }
 
 extension Image {
