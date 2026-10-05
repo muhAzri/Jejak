@@ -38,10 +38,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Core/Network/.gitkeep,
-				Features/Counter/Data/DataSources/.gitkeep,
-				Features/Counter/Data/Models/.gitkeep,
-				Features/Counter/Data/Services/.gitkeep,
-				Features/Counter/Presentation/Components/.gitkeep,
 				Info.plist,
 			);
 			target = 28AA1A4330713DB60055CD8C /* Jejak */;

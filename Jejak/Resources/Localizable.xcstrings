@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%lld" : {
-
-    },
     "5:28 /km" : {
 
     },
@@ -292,9 +289,6 @@
           }
         }
       }
-    },
-    "Increment" : {
-
     },
     "Jejak has no server. Every session lives on your device." : {
       "localizations" : {

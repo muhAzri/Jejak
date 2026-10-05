@@ -15,7 +15,6 @@ final class DIContainer {
                 SettingsAssembly(),
                 HomeAssembly(),
                 SessionAssembly(),
-                CounterAssembly(),
                 // add one Assembly per feature
             ],
             container: container
