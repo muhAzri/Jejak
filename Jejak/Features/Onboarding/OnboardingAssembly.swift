@@ -26,6 +26,18 @@ final class OnboardingAssembly: Assembly {
             }
         }.inObjectScope(.container)
 
+        container.register(GetLocationPermission.self) { r in
+            MainActor.assumeIsolated {
+                GetLocationPermission(r.resolve(LocationPermissionService.self)!)
+            }
+        }.inObjectScope(.container)
+
+        container.register(ObserveLocationPermission.self) { r in
+            MainActor.assumeIsolated {
+                ObserveLocationPermission(r.resolve(LocationPermissionService.self)!)
+            }
+        }.inObjectScope(.container)
+
         // ViewModel: new instance per resolve
         container.register(OnboardingViewModel.self) { r in
             MainActor.assumeIsolated {
