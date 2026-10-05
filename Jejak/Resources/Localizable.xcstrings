@@ -133,6 +133,36 @@
         }
       }
     },
+    "Delete" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hapus"
+          }
+        }
+      }
+    },
+    "Delete Session" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hapus Sesi"
+          }
+        }
+      }
+    },
+    "Delete This Session?" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hapus Sesi Ini?"
+          }
+        }
+      }
+    },
     "Discard" : {
       "localizations" : {
         "id" : {
