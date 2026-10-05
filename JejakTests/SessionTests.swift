@@ -10,18 +10,48 @@ private func sample(_ step: Int, at seconds: TimeInterval, accuracy: Double = 5,
                    timestamp: start.addingTimeInterval(seconds))
 }
 
+/// Deterministic Gaussian noise, so the noisy-GPS tests are repeatable.
+private struct Noise {
+    private var state: UInt64
+    init(seed: UInt64) { state = seed }
+
+    mutating func gaussian(_ sigma: Double) -> Double {
+        let u1 = max(uniform(), .leastNonzeroMagnitude)
+        let u2 = uniform()
+        return sigma * sqrt(-2 * log(u1)) * cos(2 * .pi * u2)
+    }
+
+    private mutating func uniform() -> Double {
+        state = state &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
+        return Double(state >> 11) / Double(1 << 53)
+    }
+}
+
+/// A fix `east`/`north` meters from the origin, blurred by `sigma` meters of GPS noise.
+private func noisyFix(east: Double, north: Double, at time: Date, sigma: Double, noise: inout Noise,
+                      altitude: Double = 0, verticalAccuracy: Double = -1) -> LocationSample {
+    LocationSample(latitude: (north + noise.gaussian(sigma)) / TrackFilter.metersPerDegree,
+                   longitude: (east + noise.gaussian(sigma)) / TrackFilter.metersPerDegree,
+                   horizontalAccuracy: sigma * 1.5,
+                   timestamp: time,
+                   altitude: altitude,
+                   verticalAccuracy: verticalAccuracy)
+}
+
 struct SessionRecorderTests {
     let start = Date(timeIntervalSince1970: 1_000_000)
 
     @Test func accumulatesDistanceAlongTheRoute() {
-        var recorder = SessionRecorder()
+        var recorder = SessionRecorder(activity: .run)
         for step in 0...10 { recorder.record(sample(step, at: Double(step) * 4, from: start)) }
-        #expect(recorder.route.count == 11)
-        #expect(abs(recorder.distanceMeters - metersPerStep * 10) < 0.5)
+        #expect(recorder.isMoving)
+        #expect(recorder.route.first?.latitude == 0)
+        // The smoothed estimate trails the last fix by a little.
+        #expect(abs(recorder.distanceMeters - metersPerStep * 10) < 3)
     }
 
     @Test func dropsImpreciseJitteryAndImpossibleFixes() {
-        var recorder = SessionRecorder()
+        var recorder = SessionRecorder(activity: .run)
         recorder.record(sample(0, at: 0, from: start))
         let imprecise = recorder.record(sample(1, at: 4, accuracy: 100, from: start))
         let jitter = recorder.record(LocationSample(latitude: 0.00001, longitude: 0, horizontalAccuracy: 5,
@@ -33,21 +63,164 @@ struct SessionRecorderTests {
     }
 
     @Test func marksWeakFixesAsEstimated() {
-        var recorder = SessionRecorder()
+        var recorder = SessionRecorder(activity: .run)
         recorder.record(sample(0, at: 0, from: start))
-        recorder.record(sample(1, at: 4, accuracy: 40, from: start))
-        #expect(recorder.route.map(\.isEstimated) == [false, true])
+        for step in 1...8 { recorder.record(sample(step, at: Double(step) * 4, accuracy: 40, from: start)) }
+        #expect(recorder.route.first?.isEstimated == false)
+        #expect(recorder.route.count > 1)
+        #expect(recorder.route.dropFirst().allSatisfy { $0.isEstimated })
     }
 
     @Test func doesNotCountTheGapAcrossAPause() {
-        var recorder = SessionRecorder()
-        recorder.record(sample(0, at: 0, from: start))
-        recorder.record(sample(1, at: 4, from: start))
+        var recorder = SessionRecorder(activity: .run)
+        for step in 0...5 { recorder.record(sample(step, at: Double(step) * 4, from: start)) }
         recorder.startNewSegment()
-        recorder.record(sample(20, at: 60, from: start))
-        recorder.record(sample(21, at: 64, from: start))
-        #expect(abs(recorder.distanceMeters - metersPerStep * 2) < 0.5)
-        #expect(recorder.route.map(\.segment) == [0, 0, 1, 1])
+        for step in 20...25 { recorder.record(sample(step, at: Double(step) * 4, from: start)) }
+        #expect(abs(recorder.distanceMeters - metersPerStep * 10) < 4)
+        #expect(Set(recorder.route.map(\.segment)) == [0, 1])
+    }
+
+    @Test func standingStillAddsNoDistance() {
+        var noise = Noise(seed: 7)
+        var withoutDoppler = SessionRecorder(activity: .run)
+        var withDoppler = SessionRecorder(activity: .run)
+        for second in 0..<300 {
+            let fix = noisyFix(east: 0, north: 0, at: start.addingTimeInterval(Double(second)), sigma: 5, noise: &noise)
+            withoutDoppler.record(fix)
+            withDoppler.record(LocationSample(latitude: fix.latitude, longitude: fix.longitude,
+                                              horizontalAccuracy: fix.horizontalAccuracy, timestamp: fix.timestamp,
+                                              speed: abs(noise.gaussian(0.15)), speedAccuracy: 0.3))
+        }
+        // Summing the raw fixes would make this a ~2 km "run".
+        #expect(withoutDoppler.distanceMeters < 30)
+        #expect(withDoppler.distanceMeters == 0)
+        #expect(!withDoppler.isMoving)
+    }
+
+    @Test func followsCornersWithoutCuttingThem() {
+        var noise = Noise(seed: 5)
+        var recorder = SessionRecorder(activity: .run)
+        // Three laps of a 100 m square at 3 m/s.
+        for second in 0...400 {
+            let along = (Double(second) * 3).truncatingRemainder(dividingBy: 400)
+            let side = Int(along / 100)
+            let offset = along - Double(side) * 100
+            let (east, north) = [(offset, 0), (100, offset), (100 - offset, 100), (0, 100 - offset)][side]
+            recorder.record(noisyFix(east: east, north: north, at: start.addingTimeInterval(Double(second)), sigma: 4, noise: &noise))
+        }
+        #expect(abs(recorder.distanceMeters - 1200) < 1200 * 0.04)
+    }
+
+    @Test func noisyRunMeasuresCloseToTheTrueDistance() {
+        var noise = Noise(seed: 42)
+        var recorder = SessionRecorder(activity: .run)
+        var raw = 0.0
+        var previous: LocationSample?
+        // 10 minutes at 3 m/s: 1800 m.
+        for second in 0...600 {
+            let fix = noisyFix(east: Double(second) * 3, north: 0, at: start.addingTimeInterval(Double(second)),
+                               sigma: 4, noise: &noise)
+            if let previous { raw += Geo.distance(previous.latitude, previous.longitude, fix.latitude, fix.longitude) }
+            previous = fix
+            recorder.record(fix)
+        }
+        #expect(abs(recorder.distanceMeters - 1800) < 1800 * 0.03)
+        #expect(raw > 1800 * 1.3)   // what the old naive sum would have reported
+    }
+
+    @Test func stopAtATrafficLightIsNotCounted() {
+        var noise = Noise(seed: 3)
+        var recorder = SessionRecorder(activity: .run)
+        var east = 0.0
+        for second in 0...180 {
+            // Run, wait a minute at the light, run on: 120 s × 3 m/s = 360 m.
+            if !(60..<120).contains(second) { east += 3 }
+            recorder.record(noisyFix(east: east, north: 0, at: start.addingTimeInterval(Double(second)), sigma: 4, noise: &noise))
+        }
+        #expect(abs(recorder.distanceMeters - 360) < 360 * 0.05)
+    }
+
+    @Test func rejectsAGPSSpikeMidRun() {
+        var recorder = SessionRecorder(activity: .run)
+        for second in 0...30 {
+            let east = second == 15 ? 45 + 60.0 : Double(second) * 3   // one fix 60 m off the line
+            recorder.record(LocationSample(latitude: 0, longitude: east / TrackFilter.metersPerDegree,
+                                           horizontalAccuracy: 5, timestamp: start.addingTimeInterval(Double(second))))
+        }
+        #expect(abs(recorder.distanceMeters - 90) < 5)
+    }
+
+    @Test func plausibleSpeedDependsOnTheActivity() {
+        let fast = LocationSample(latitude: 0, longitude: 0, horizontalAccuracy: 5, timestamp: start,
+                                  speed: 7, speedAccuracy: 0.5)
+        var run = SessionRecorder(activity: .run)
+        var walk = SessionRecorder(activity: .walk)
+        let runAccepted = run.record(fast)
+        let walkAccepted = walk.record(fast)
+        #expect(runAccepted)
+        #expect(!walkAccepted)
+    }
+
+    @Test func dopplerSpeedTellsMovingFromStanding() {
+        var recorder = SessionRecorder(activity: .walk)
+        for second in 0...20 {
+            recorder.record(LocationSample(latitude: Double(second) * 1.4 / TrackFilter.metersPerDegree, longitude: 0,
+                                           horizontalAccuracy: 5, timestamp: start.addingTimeInterval(Double(second)),
+                                           speed: 1.4, speedAccuracy: 0.3, course: 0, courseAccuracy: 10))
+        }
+        #expect(recorder.isMoving)
+        #expect(abs(recorder.distanceMeters - 28) < 3)
+    }
+
+    @Test func keepsEveryRawFixAndReplaysToTheSameResult() {
+        var noise = Noise(seed: 11)
+        var recorder = SessionRecorder(activity: .run)
+        for second in 0...60 {
+            recorder.record(noisyFix(east: Double(second) * 3, north: 0, at: start.addingTimeInterval(Double(second)), sigma: 4, noise: &noise))
+        }
+        recorder.startNewSegment()
+        for second in 200...260 {
+            recorder.record(noisyFix(east: Double(second) * 3, north: 0, at: start.addingTimeInterval(Double(second)), sigma: 4, noise: &noise))
+        }
+        recorder.finish()
+        #expect(recorder.rawTrack.count == 122)
+        let replayed = SessionRecorder(activity: .run, replaying: recorder.rawTrack)
+        #expect(replayed.route == recorder.route)
+        #expect(replayed.distanceMeters == recorder.distanceMeters)
+    }
+
+    @Test func smoothsAltitudeIntoTheRoute() throws {
+        var noise = Noise(seed: 5)
+        var recorder = SessionRecorder(activity: .run)
+        for second in 0...300 {
+            // Climb 30 m over the run; GPS altitude is off by several meters each fix.
+            let altitude = Double(second) / 10 + noise.gaussian(6)
+            recorder.record(noisyFix(east: Double(second) * 3, north: 0, at: start.addingTimeInterval(Double(second)),
+                                     sigma: 4, noise: &noise, altitude: altitude, verticalAccuracy: 8))
+        }
+        let gain = RouteElevation.gain(recorder.route)
+        #expect(abs(gain - 30) < 8)
+    }
+}
+
+struct RouteElevationTests {
+    private func route(_ altitudes: [Double?], segments: [Int]? = nil) -> [RoutePoint] {
+        altitudes.enumerated().map { index, altitude in
+            RoutePoint(latitude: 0, longitude: 0, timestamp: Date(timeIntervalSince1970: Double(index)),
+                       isEstimated: false, segment: segments?[index] ?? 0, altitude: altitude)
+        }
+    }
+
+    @Test func ignoresWobbleBelowTheThreshold() {
+        #expect(RouteElevation.gain(route([10, 12, 10, 12, 10, 12])) == 0)
+    }
+
+    @Test func countsClimbsAndSkipsDescents() {
+        #expect(RouteElevation.gain(route([10, 14, 20, 15, 18, 25, nil, 25])) == 20)
+    }
+
+    @Test func doesNotClimbAcrossAPause() {
+        #expect(RouteElevation.gain(route([10, 10, 40, 40], segments: [0, 0, 1, 1])) == 0)
     }
 }
 
@@ -103,8 +276,11 @@ struct ActiveSessionViewModelTests {
 
     private final class Sessions: SessionRepository {
         var saved: [SessionSummary] = []
+        var rawTracks: [UUID: [RecordedFix]] = [:]
         func latest() -> SessionSummary? { saved.last }
         func save(_ session: SessionSummary) { saved.append(session) }
+        func saveRawTrack(_ track: [RecordedFix], id: UUID) { rawTracks[id] = track }
+        func rawTrack(id: UUID) -> [RecordedFix] { rawTracks[id] ?? [] }
         func delete(id: UUID) { saved.removeAll { $0.id == id } }
     }
 
@@ -171,9 +347,9 @@ struct ActiveSessionViewModelTests {
         model.save()
         let saved = try #require(sessions.saved.first)
         #expect(saved.activity == .run)
-        #expect(saved.route.count == 20)
-        #expect(abs(saved.distanceMeters - metersPerStep * 19) < 0.5)
+        #expect(abs(saved.distanceMeters - metersPerStep * 19) < 2)
         #expect(saved.duration == 76)
+        #expect(sessions.rawTrack(id: saved.id).count == 20)
     }
 
     @Test func weakWhenFixesStopArriving() {
@@ -218,5 +394,34 @@ struct SessionRepositoryTests {
 
         repository.delete(id: older.id)
         #expect(SessionRepositoryImpl(fileURL: url).latest() == nil)
+    }
+
+    @Test func storesRawTracksBesideSessionsAndDeletesThemTogether() {
+        let url = FileManager.default.temporaryDirectory.appending(path: "sessions-\(UUID().uuidString).json")
+        let rawDirectory = url.deletingPathExtension().appendingPathExtension("raw")
+        defer {
+            try? FileManager.default.removeItem(at: url)
+            try? FileManager.default.removeItem(at: rawDirectory)
+        }
+
+        let session = SessionSummary(activity: .run, startDate: Date(timeIntervalSince1970: 5_000), distanceMeters: 500, duration: 200)
+        let track = [RecordedFix(sample: LocationSample(latitude: -6.2, longitude: 106.8, horizontalAccuracy: 5,
+                                                        timestamp: Date(timeIntervalSince1970: 5_000), speed: 3,
+                                                        speedAccuracy: 0.4, course: 90, courseAccuracy: 12,
+                                                        altitude: 8, verticalAccuracy: 4),
+                                 stretch: 0)]
+        let repository = SessionRepositoryImpl(fileURL: url)
+        repository.save(session)
+        repository.saveRawTrack(track, id: session.id)
+        #expect(SessionRepositoryImpl(fileURL: url).rawTrack(id: session.id) == track)
+
+        repository.delete(id: session.id)
+        #expect(repository.rawTrack(id: session.id).isEmpty)
+    }
+
+    @Test func readsSessionsSavedBeforeAltitudeWasRecorded() throws {
+        let json = #"[{"id":"9B1DEB4D-3B7D-4BAD-9BDD-2B0D7B3DCB6D","activity":"run","startDate":0,"endDate":60,"distanceMeters":200,"duration":60,"route":[{"latitude":1,"longitude":2,"timestamp":0,"isEstimated":false,"segment":0}]}]"#
+        let sessions = try JSONDecoder().decode([SessionSummary].self, from: Data(json.utf8))
+        #expect(sessions.first?.route.first?.altitude == nil)
     }
 }
