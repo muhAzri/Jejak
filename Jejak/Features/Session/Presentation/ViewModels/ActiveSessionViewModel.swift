@@ -24,8 +24,8 @@ final class ActiveSessionViewModel {
     private(set) var phase: SessionPhase = .searching
     private(set) var isLocked = false
     private(set) var isShowingTooShort = false
-    private(set) var recorder = SessionRecorder()
-    /// The latest fix, accepted or not; drives the position dot and the signal chip.
+    private(set) var recorder: SessionRecorder
+    /// The latest fix, accepted or not; drives the signal chip.
     private(set) var lastSample: LocationSample?
     /// Updated every second by `runClock()`; all elapsed times are measured against it.
     private(set) var now: Date
@@ -47,6 +47,7 @@ final class ActiveSessionViewModel {
          saveSession: SaveSession,
          clock: @escaping () -> Date = { .now }) {
         self.activity = activity
+        recorder = SessionRecorder(activity: activity)
         self.trackLocation = trackLocation
         self.saveSession = saveSession
         self.clock = clock
@@ -61,6 +62,9 @@ final class ActiveSessionViewModel {
         if now.timeIntervalSince(lastSample.timestamp) > Self.staleFixInterval { return .weak }
         return GPSSignal(accuracy: lastSample.horizontalAccuracy)
     }
+
+    /// The position dot: smoothed, so it stays on the route instead of jumping with every fix.
+    var position: LocationSample? { recorder.estimatedPosition ?? lastSample }
 
     var distanceMeters: Double { recorder.distanceMeters }
     var route: [RoutePoint] { recorder.route }
@@ -160,6 +164,7 @@ final class ActiveSessionViewModel {
             return
         }
         bankDuration()
+        recorder.finish()
         pausedSince = nil
         endDate = now
         phase = .finished

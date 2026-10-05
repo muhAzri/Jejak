@@ -130,7 +130,7 @@ struct ActiveSessionScreen: View {
     private func mapArea(chipsTop: CGFloat, fadesIntoCanvas: Bool, pillBottom: CGFloat) -> some View {
         ZStack {
             LiveSessionMap(route: viewModel.route,
-                           position: viewModel.lastSample,
+                           position: viewModel.position,
                            signal: viewModel.signal,
                            phase: viewModel.phase,
                            tint: viewModel.activity.tint,
