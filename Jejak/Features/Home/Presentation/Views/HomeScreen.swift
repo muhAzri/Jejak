@@ -41,6 +41,9 @@ struct HomeScreen: View {
             .navigationDestination(isPresented: $isShowingSettings) {
                 SettingsScreen()
             }
+            .navigationDestination(for: SessionSummary.self) { session in
+                SessionDetailScreen(session: session, unit: viewModel.unit)
+            }
         }
         .fullScreenCover(item: $activeSession, onDismiss: viewModel.refresh) { activity in
             ActiveSessionScreen(activity: activity, summaryColorScheme: colorScheme) { activeSession = nil }
@@ -227,10 +230,18 @@ struct HomeScreen: View {
     private func lastSession(_ layout: ScreenLayout, fillsHeight: Bool = true) -> some View {
         if let session = viewModel.lastSession {
             if layout == .split {
-                RoutePreview(session: session, cornerRadius: 12)
-                    .frame(minHeight: 160, maxHeight: fillsHeight ? .infinity : 160)
+                NavigationLink(value: session) {
+                    RoutePreview(session: session, cornerRadius: 12)
+                }
+                .buttonStyle(.plain)
+                .frame(minHeight: 160, maxHeight: fillsHeight ? .infinity : 160)
+                // The row below is the same destination; one stop is enough for VoiceOver.
+                .accessibilityHidden(true)
             }
-            LastSessionRow(session: session, unit: viewModel.unit, layout: layout)
+            NavigationLink(value: session) {
+                LastSessionRow(session: session, unit: viewModel.unit, layout: layout)
+            }
+            .buttonStyle(.plain)
         } else {
             EmptyLastSessionCard(fillsHeight: layout != .regular && fillsHeight)
         }

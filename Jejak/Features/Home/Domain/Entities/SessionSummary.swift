@@ -1,7 +1,7 @@
 import Foundation
 
 /// A saved session, as shown on Home and stored on the device.
-struct SessionSummary: Equatable, Identifiable, Codable {
+struct SessionSummary: Hashable, Identifiable, Codable {
     let id: UUID
     let activity: ActivityType
     let startDate: Date
@@ -29,4 +29,7 @@ struct SessionSummary: Equatable, Identifiable, Codable {
 
     /// Seconds per meter; nil when no distance was covered.
     var pace: Double? { distanceMeters > 0 ? duration / distanceMeters : nil }
+
+    /// Hashes the id only, so pushing a session onto a navigation path doesn't walk its whole route.
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
