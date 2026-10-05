@@ -14,6 +14,7 @@ final class DIContainer {
                 OnboardingAssembly(),
                 SettingsAssembly(),
                 HomeAssembly(),
+                SessionAssembly(),
                 CounterAssembly(),
                 // add one Assembly per feature
             ],
@@ -24,6 +25,13 @@ final class DIContainer {
     func resolve<T>(_ type: T.Type) -> T {
         guard let instance = container.resolve(type) else {
             fatalError("\(type) is not registered")
+        }
+        return instance
+    }
+
+    func resolve<T, Arg>(_ type: T.Type, argument: Arg) -> T {
+        guard let instance = container.resolve(type, argument: argument) else {
+            fatalError("\(type) with \(Arg.self) is not registered")
         }
         return instance
     }
