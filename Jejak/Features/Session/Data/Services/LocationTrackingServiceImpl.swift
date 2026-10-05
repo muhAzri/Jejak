@@ -59,7 +59,13 @@ final class LocationTrackingServiceImpl: NSObject, LocationTrackingService, @pre
             continuation?.yield(LocationSample(latitude: location.coordinate.latitude,
                                                longitude: location.coordinate.longitude,
                                                horizontalAccuracy: location.horizontalAccuracy,
-                                               timestamp: location.timestamp))
+                                               timestamp: location.timestamp,
+                                               speed: location.speed,
+                                               speedAccuracy: location.speedAccuracy,
+                                               course: location.course,
+                                               courseAccuracy: location.courseAccuracy,
+                                               altitude: location.altitude,
+                                               verticalAccuracy: location.verticalAccuracy))
         }
     }
 
